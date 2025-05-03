@@ -22,7 +22,7 @@ fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
     let yIndex = global_id.y;
     let index = xIndex + yIndex * inSizes.sizeX;
 
-    // Read the input matrix
+
     var xValue = inXMatrix.numbers[index];
     var vValue = inVMatrix.numbers[index];
     var cValue = inCMatrix.numbers[index];
@@ -33,22 +33,22 @@ fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
     let x = i32(xIndex);
     let y = i32(yIndex);
 
-    // Left neighbor
+
     if (x >= 0) {
         let n = idx - 1;
         vValue += (inXMatrix.numbers[u32(n)] - xValue) * cValue;
     }
-    // Right neighbor
+
     if (x <= sizeX - 1) {
         let n = idx + 1;
         vValue += (inXMatrix.numbers[u32(n)] - xValue) * cValue;
     }
-    // Top neighbor
+
     if (y >= 0) {
         let n = idx - sizeX;
         vValue += (inXMatrix.numbers[u32(n)] - xValue) * cValue;
     }
-    // Bottom neighbor
+
     if (y <= sizeY - 1) {
         let n = idx + sizeX;
         vValue += (inXMatrix.numbers[u32(n)] - xValue) * cValue;
@@ -65,6 +65,5 @@ fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
 
 }
 `;
-
 
 export default shader_code;

@@ -23,22 +23,21 @@ function renderToCanvas(xSpace: number[], width: number, height: number, CSpace:
 
     for (let i = 0; i < xSpace.length; i++) {
         if (CSpace[i] === 0) {
-            imageData.data[i * 4] = 0;     // R
-            imageData.data[i * 4 + 1] = 0; // G
-            imageData.data[i * 4 + 2] = 0; // B
-            imageData.data[i * 4 + 3] = 0; // A
+            imageData.data[i * 4] = 0;
+            imageData.data[i * 4 + 1] = 0;
+            imageData.data[i * 4 + 2] = 0;
+            imageData.data[i * 4 + 3] = 0;
             continue;
         }
 
-        // Convert wave height to color intensity (assuming values between -1 and 1)
         const valueR = Math.floor(sigmoid(xSpace[i]) * 255);
         const valueG = Math.floor(sigmoid(xSpace[i] - 1) * 255);
         const valueB = Math.floor(sigmoid(xSpace[i] + 1) * 255);
         const index = i * 4;
-        imageData.data[index] = valueR;     // R
-        imageData.data[index + 1] = valueG; // G
-        imageData.data[index + 2] = valueB; // B
-        imageData.data[index + 3] = 255;   // A
+        imageData.data[index] = valueR;
+        imageData.data[index + 1] = valueG;
+        imageData.data[index + 2] = valueB;
+        imageData.data[index + 3] = 255;
     }
 
     ctx.putImageData(imageData, 0, 0);
@@ -59,7 +58,6 @@ const XSize = 500;
 const YSize = 500;
 const dt = 1 / 60;
 
-    // Initialize GPU
 var wave = new WaveSimulator();
 let XSpace = getSpace(XSize, YSize, 0);
 
@@ -68,8 +66,6 @@ XSpace[XSize/2 + YSize * XSize / 2] = 300;
 let VSpace = getSpace(XSize, YSize, 0);
 
 CSpace = getSpace(XSize, YSize, 1);
-
-
 
 console.log("GPU initialized");
 
@@ -86,10 +82,8 @@ async function main(): Promise<void> {
     canvas.width = XSize;
     canvas.height = YSize;
 
-    // Initial render
     renderToCanvas(XSpace, XSize, YSize, CSpace);
     setInterval(async () => {
-        // let now = Date.now();
         await wave.update();
         XSpace = Array.from(await wave.readXOnCpu());
         renderToCanvas(XSpace, XSize, YSize, CSpace);
@@ -109,14 +103,10 @@ const fillCRect: (event: FillCRectEvent) => Promise<void> = async (event) => {
     const gridX: number = Math.floor(px * XSize / rect.width);
     const gridY: number = Math.floor(py * YSize / rect.height);
 
-    //const { X, V } = await wave.readOnCpu();
-    //XSpace = Array.from(X);
-    //VSpace = Array.from(V);
-
     CSpace = fillZone(
         gridX - 10, gridY - 10,
         gridX + 10, gridY + 10,
-        0,      // value to set
+        0,
         XSize, YSize,
         CSpace
     );
@@ -126,7 +116,6 @@ const fillCRect: (event: FillCRectEvent) => Promise<void> = async (event) => {
 };
 
 canvas.addEventListener('click', fillCRect);
-  
 
 var mouseDown = false;
 
@@ -143,7 +132,5 @@ canvas.addEventListener('mousemove', async (event) => {
         await fillCRect(event);
     }
 });
-
-    
 
 main().catch(console.error);
